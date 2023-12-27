@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<permissions xmlns:android="http://schemas.android.com/apk/res/android">
+    <permission
+        android:name="com.example.app.READ_PERMISSION"
+        android:label="Read Permission"
+        android:protectionLevel="dangerous" />
+
+    <permission
+        android:name="com.example.app.WRITE_PERMISSION"
+        android:label="Write Permission"
+        android:protectionLevel="dangerous" />
+</permissions>

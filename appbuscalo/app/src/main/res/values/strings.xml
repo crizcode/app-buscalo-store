@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Buscalo</string>
+    <string name="des_registrar">REGISTRARSE</string>
+    <string name="desc_ingresar">INGRESAR</string>
+    <string name="nombres">Nombres</string>
+    <string name="mail">Correo</string>
+    <string name="pass">Contraseña</string>
+    <string name="pass_conf">Repetir contraseña</string>
+    <string name="desc_unirse">Unirse con:</string>
+    <string name="desc_regis">Registrarse con:</string>
+    <string name="desc_ini1">Descubre, Elige,</string>
+    <string name="desc_ini2">Compra, Disfruta.</string>
+    <string name="desc_ini3">¡Únete Ahora!</string>
+
+    <string name="iniciar">Iniciar sesión</string>
+    <string name="registrar">Registrarse</string>
+
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
+</resources>

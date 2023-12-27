@@ -1,0 +1,223 @@
+openapi: 3.0.0
+info:
+  title: Buscalo APP API
+  description: |
+    Buscalo APP API es un servidor basado en OpenAPI 3.0.
+  version: 1.0.0
+  contact:
+    email: crizcode@gmail.com
+servers:
+  - url: http://localhost/api/v1
+tags:
+  - name: users
+    description: Operaciones de usuario
+    externalDocs:
+      description: Más información
+      url: http://localhost.co
+paths:
+  /users/registro:
+    post:
+      tags:
+        - users
+      summary: Registrarse
+      description: Permite a los usuarios registrarse en la aplicación mediante correo electrónico, Gmail, Facebook o teléfono.
+      operationId: registrarseUsuario
+      requestBody:
+        description: Datos de registro del usuario
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration' # Cambiado de User a UserRegistration
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UserRegistration' # Cambiado de User a UserRegistration
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRegistration' # Cambiado de User a UserRegistration
+      responses:
+        '201':
+          description: Usuario creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRegistration' # Cambiado de User a UserRegistration
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UserRegistration' # Cambiado de User a UserRegistration
+        '202':
+          description: Aceptado, pero la creación del usuario aún está en proceso
+        '400':
+          description: Solicitud incorrecta o datos de usuario inválidos
+        '401':
+          description: Usuario no autorizado
+        '500':
+          description: Error interno del servidor
+
+  /user/login:
+    post:
+      tags:
+        - users
+      summary: Iniciar sesión
+      description: Inicia sesión en el sistema mediante correo electrónico, Gmail, Facebook o teléfono.
+      operationId: loginUser
+      requestBody:
+        description: Datos de inicio de sesión
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LoginUser'
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                type: string
+            application/xml:
+              schema:
+                type: string
+        '400':
+          description: Credenciales inválidas
+        '401':
+          description: Usuario no autorizado
+        '500':
+          description: Error interno del servidor
+
+  /users/{id}:
+    delete:
+      tags:
+        - users
+      summary: Dar de baja usuario
+      description: Permite a un usuario eliminar su cuenta de la aplicación. Esta acción es irreversible.
+      operationId: darDeBajaUsuario
+      parameters:
+        - name: id
+          in: path
+          description: ID del usuario a dar de baja
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Operación exitosa
+        '400':
+          description: No se pudo dar de baja al usuario
+        '401':
+          description: Acceso no autorizado
+        '404':
+          description: Usuario no encontrado
+        '500':
+          description: Error interno del servidor 
+
+  /users/sync:
+    post:
+      tags:
+        - users
+      summary: Sincronizar usuario
+      description: Sincroniza la información del usuario desde el proveedor de identidad al almacenamiento local.
+      operationId: sincronizarUsuario
+      requestBody:
+        description: Datos del usuario para sincronización
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration' # Cambiado de User a UserRegistration
+      responses:
+        '200':
+          description: Sincronización exitosa
+        '400':
+          description: Error en la sincronización
+        '401':
+          description: Usuario no autorizado
+        '500':
+          description: Error interno del servidor
+
+components:
+  schemas:
+    UserRegistration:
+      type: object
+      properties:
+        method:
+          type: string
+          enum: [email, thirdPartyAuth]
+        registrationType:
+          type: string
+          enum: [gmail, facebook, phone]
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        thirdPartyAuth:
+          type: object
+          properties:
+            provider:
+              type: string
+              enum: [gmail, facebook, phone]
+            token:
+              type: string
+      required:
+        - method
+      anyOf:
+        - properties:
+            method:
+              enum: [email]
+            registrationType:
+              enum: [email]
+          required:
+            - email
+            - password
+          not:
+            properties:
+              method:
+                enum: [thirdPartyAuth]
+        - properties:
+            method:
+              enum: [thirdPartyAuth]
+            registrationType:
+              enum: [gmail, facebook, phone]
+          required:
+            - thirdPartyAuth
+          not:
+            properties:
+              method:
+                enum: [email]
+    LoginUser:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+
+  requestBodies:
+    UserArray:
+      description: Lista de objetos de usuario
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/UserRegistration' # Cambiado de User a UserRegistration
+
+  securitySchemes:
+    appsbuscalo_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://localhost/oauth/autorizado
+          scopes:
+            write: 'modificar productos'
+            read: 'ver productos'
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
